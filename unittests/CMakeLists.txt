@@ -1,0 +1,15 @@
+set(TEST_SOURCES
+  ${TEST_SOURCES}
+
+	${CMAKE_CURRENT_SOURCE_DIR}/glcontextparamtest.cpp
+
+  PARENT_SCOPE
+)
+set(TEST_HEADERS
+  ${TEST_HEADERS}
+	
+	${CMAKE_CURRENT_SOURCE_DIR}/glcontextparamtest.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/catch.hpp
+
+  PARENT_SCOPE
+)
