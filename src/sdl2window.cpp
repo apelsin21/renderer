@@ -2,24 +2,51 @@
 
 #include "sdl2window.hpp"
 
-std::vector<GLContextParam> SDL2Window::GetGLContextParams() const {
-  return std::vector<GLContextParam> {
+using namespace std;
+
+vector<GLContextParam> SDL2Window::GetGLContextParams() const {
+  return vector<GLContextParam> {
+    GLContextParam(4, 5, true, false),  // 4.5 Core Profile
+    GLContextParam(4, 5, false, false), // 4.5
+    GLContextParam(4, 4, true, false),  // 4.4 Core Profile
+    GLContextParam(4, 4, false, false), // 4.4
+    GLContextParam(4, 3, true, false),  // 4.3 Core Profile
+    GLContextParam(4, 3, false, false), // 4.3
+    GLContextParam(4, 2, true, false),  // 4.2 Core Profile
+    GLContextParam(4, 2, false, false), // 4.2
+    GLContextParam(4, 1, true, false),  // 4.1 Core Profile
+    GLContextParam(4, 1, false, false), // 4.1
+    GLContextParam(4, 0, true, false),  // 4.0 Core Profile
+    GLContextParam(4, 0, false, false), // 4.0
+    GLContextParam(4, 0, false, true),  // 4.0 ES 
     GLContextParam(3, 3, true, false),  // 3.3 Core Profile
+    GLContextParam(3, 3, false, false), // 3.3
     GLContextParam(3, 2, true, false),  // 3.2 Core Profile
+    GLContextParam(3, 2, false, false), // 3.2
     GLContextParam(3, 1, false, false), // 3.1
     GLContextParam(3, 0, false, false), // 3.0
+    GLContextParam(3, 0, false, true),  // 3.0 ES
     GLContextParam(2, 1, false, false), // 2.1
     GLContextParam(2, 1, false, true),  // 2.1 ES
     GLContextParam(2, 0, false, false), // 2.0
-    GLContextParam(2, 0, false, true)   // 2.0 ES
+    GLContextParam(2, 0, false, true),  // 2.0 ES
+    GLContextParam(1, 5, false, false),  // 1.5
+    GLContextParam(1, 4, false, false),  // 1.4
+    GLContextParam(1, 3, false, false),  // 1.3
+    GLContextParam(1, 2, false, false),  // 1.2
+    GLContextParam(1, 1, false, false),  // 1.1
   };
 };
 
-bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
+bool SDL2Window::CreateContext(const vector<GLContextParam>& params,
+                               unsigned int width, unsigned int height) {
   bool createdContext = false;
 
-  for(std::vector<GLContextParam>::const_iterator it = params.begin();
-    it < params.end() && !createdContext;
+  vector<GLContextParam> sortedParams = params;
+  stable_sort(sortedParams.begin(), sortedParams.end());
+
+  for(vector<GLContextParam>::const_iterator it = sortedParams.begin();
+    it < sortedParams.end() && !createdContext;
     ++it) {
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, it->majorVersion);
@@ -36,9 +63,11 @@ bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     } else if(it->isGLES) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    } m_sdlWindow = SDL_CreateWindow("OpenGL Test",
+    }
+    
+    m_sdlWindow = SDL_CreateWindow("OpenGL Test",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    	800, 600, SDL_WINDOW_OPENGL);
+    	width, height, SDL_WINDOW_OPENGL);
 
     m_sdlContext = SDL_GL_CreateContext(m_sdlWindow);
 
@@ -49,31 +78,31 @@ bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
   }
 
   if(!m_sdlWindow || !m_sdlContext) {
-      std::cerr << "SDL2Window failed to create an OpenGL context. Error: "
-         << SDL_GetError() << std::endl;
+      cerr << "SDL2Window failed to create an OpenGL context. Error: "
+         << SDL_GetError() << endl;
   }
 
   return createdContext;
 }
 
-bool SDL2Window::Init() {
+bool SDL2Window::Init(unsigned int width, unsigned int height) {
   if(IsInitialized()) {
     return false;
   }
 
-  const std::vector<GLContextParam>& params = GetGLContextParams();
+  const vector<GLContextParam>& params = GetGLContextParams();
 
   //If the return value isn't zero, SDL is initialized.
   bool sdlIsInitialized = SDL_WasInit(SDL_INIT_VIDEO) == 0 ? false : true;
 
   if(sdlIsInitialized) {
-    std::cout << "SDL2 was already initialized during init.\n";
+    cout << "SDL2 was already initialized during init.\n";
   } else if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "Unable to initialize SDL2. Error: " << SDL_GetError() << std::endl;
+    cout << "Unable to initialize SDL2. Error: " << SDL_GetError() << endl;
     return false;
   }
 
-  bool createdContext = CreateContext(params);
+  bool createdContext = CreateContext(params, width, height);
 
   if(createdContext) {
     int err = SDL_GL_MakeCurrent(m_sdlWindow, m_sdlContext);
@@ -81,8 +110,8 @@ bool SDL2Window::Init() {
     if(err == 0) {
       m_isInitialized = true;
     } else {
-      std::cout << "Failed to make SDL2 OpenGL context current. Error: "
-           << SDL_GetError() << std::endl;
+      cout << "Failed to make SDL2 OpenGL context current. Error: "
+           << SDL_GetError() << endl;
 
       createdContext = false;
     }

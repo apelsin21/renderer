@@ -5,7 +5,7 @@ class IWindow {
 public:
   virtual ~IWindow() {}
 
-  virtual bool Init() = 0;
+  virtual bool Init(unsigned int width, unsigned int height) = 0;
   virtual bool IsInitialized() const = 0;
 protected:
   bool m_isInitialized;

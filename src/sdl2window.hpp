@@ -2,6 +2,7 @@
 #define SDL2WINDOW_HPP
 
 #include <vector>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -14,7 +15,8 @@ class SDL2Window : public IWindow {
 protected:
   std::vector<GLContextParam> GetGLContextParams() const;
 
-  bool CreateContext(const std::vector<GLContextParam>& params);
+  bool CreateContext(const std::vector<GLContextParam>& params,
+                     unsigned int width, unsigned int height);
 
   SDL_Window* m_sdlWindow;
   SDL_GLContext m_sdlContext;
@@ -39,7 +41,7 @@ public:
     SDL_Quit();
   }
 
-  bool Init();
+  bool Init(unsigned int width, unsigned int height);
   bool IsInitialized() const {
     return m_isInitialized;
   }
