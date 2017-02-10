@@ -23,6 +23,8 @@ public:
   ~GLContextParam() {
   }
 
+  bool SupportsModernGL() const;
+
   bool operator== (const GLContextParam& other) const;
   bool operator!= (const GLContextParam& other) const;
   bool operator< (const GLContextParam& other) const;

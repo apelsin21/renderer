@@ -1,8 +1,33 @@
+#include <algorithm>
+#include <string>
+#include <iostream>
+
 #include "glcontextparamtest.hpp"
 
-#include <string>
-
 using namespace std;
+
+SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
+	GIVEN("An unsorted vector") {
+    vector<GLContextParam> unsorted = GetUnsortedContextVector();
+
+		WHEN("we don't sort the vector using STL sort") {
+      sort(unsorted.begin(), unsorted.end());
+
+			THEN("the unsorted vector isn't equal to a sorted vector") {
+        vector<GLContextParam> sorted = GetSortedContextVector();
+				REQUIRE(unsorted != sorted);
+			}
+    }
+		WHEN("we sort the vector using STL stable_sort") {
+      stable_sort(unsorted.begin(), unsorted.end());
+
+			THEN("the previously unsorted vector is equal to a hand-sorted vector") {
+        vector<GLContextParam> sorted = GetSortedContextVector();
+				REQUIRE(unsorted == sorted);
+			}
+    }
+  }
+}
 
 SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 	GIVEN("An OpenGL 2.1 context param") {

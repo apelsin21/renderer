@@ -10,7 +10,10 @@ public:
 
   virtual std::string ToString() const = 0;
 
-  virtual bool operator== (const T& obj) const = 0;
+  virtual bool operator== (const T& other) const = 0;
+  virtual bool operator!= (const T& other) const = 0;
+  virtual bool operator< (const T& other) const = 0;
+  virtual bool operator> (const T& other) const = 0;
 };
 
 #endif

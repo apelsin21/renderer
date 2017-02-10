@@ -33,81 +33,48 @@ bool GLContextParam::operator!= (const GLContextParam& other) const {
   return areEqual == false;
 }
 bool GLContextParam::operator< (const GLContextParam& other) const {
-  const bool lessMajor = majorVersion < other.majorVersion;
-
-  //If the major version was greater, the minor version was also greater.
-  //If the major versions were equal, the minor versions are compared.
-  //If the major version was less, the minor version was also less.
-  //
-  //So minor version can only be true if the major versions are equal, and
-  //the minor version was greater during comparison.
-  
-  bool lessMinor = lessMajor;
-
-  if(majorVersion == other.majorVersion) {
-    lessMinor = minorVersion > other.minorVersion;
+  if(majorVersion < other.majorVersion) {
+    return true;
+  } else if(majorVersion == other.majorVersion) {
+    if(minorVersion < other.minorVersion) {
+      return true;
+    } else if(minorVersion > other.minorVersion) {
+      return false;
+    }
+  } else if(majorVersion > other.majorVersion) {
+    return false;
   }
 
-  const bool lessVersion = lessMajor && lessMinor;
-  const bool lessDepthBits = depthSize < other.depthSize;
+  if(isCoreProfile < other.isCoreProfile) {
+    return true;
+  };
 
-  //Boolean values in C/C++ are promoted to integers during comparison.
-  const bool lessCore = isCoreProfile < other.isCoreProfile;
-  const bool lessGLES = isGLES < other.isGLES;
-  const bool lessDoubleBuffered = isDoubleBuffered < other.isDoubleBuffered;
+  if(isGLES < other.isGLES) {
+    return true;
+  }
 
-  return lessVersion && lessCore && lessGLES && lessDoubleBuffered && lessDepthBits;
+  return isDoubleBuffered < other.isDoubleBuffered;
 }
 bool GLContextParam::operator> (const GLContextParam& other) const {
-  const int propertyCount = 5;
-  int equalCount = 0;
-  int greaterCount = 0;
-
   if(majorVersion > other.majorVersion) {
-    greaterCount++;
+    return true;
   } else if(majorVersion == other.majorVersion) {
-    const bool isMinorGreater = minorVersion > other.minorVersion;
-    const bool isMinorEqual = minorVersion == other.minorVersion;
-
-    if(isMinorGreater) {
-      greaterCount++;
-    } else if(isMinorEqual) {
-      equalCount++;
+    if(minorVersion > other.minorVersion) {
+      return true;
+    } else if(minorVersion < other.minorVersion) {
+      return false;
     }
-  }
-
-  if(depthSize > other.depthSize) {
-      greaterCount++;
-  } else if(depthSize == other.depthSize) {
-      equalCount++;
+  } else if(majorVersion < other.majorVersion) {
+    return false;
   }
 
   if(isCoreProfile > other.isCoreProfile) {
-      greaterCount++;
-  } else if(isCoreProfile == other.isCoreProfile) {
-      equalCount++;
+    return true;
   }
 
   if(isGLES > other.isGLES) {
-    greaterCount++;
-  } else if(isGLES == other.isGLES) {
-    equalCount++;
+    return true;
   }
 
-  if(isDoubleBuffered > other.isDoubleBuffered) {
-    greaterCount++;
-  } if(isDoubleBuffered == other.isDoubleBuffered) {
-    equalCount++;
-  }
-
-  //The minimum requirement for this to be greater is for there to be one greater
-  //property, the rest need to be atleast equal to the other object.
-  bool isGreater = false;
-  const bool allFieldsWasAtleastEqual = (equalCount + greaterCount) == propertyCount;
-
-  if(allFieldsWasAtleastEqual && greaterCount > 0) {
-    isGreater = true;
-  }
-
-  return false;
+  return isDoubleBuffered > other.isDoubleBuffered;
 }
