@@ -1,19 +1,14 @@
 #include "glcontextparam.hpp"
 
-using namespace std;
+std::string GLContextParam::ToString() const {
+  std::ostringstream ss;
+  ss << "OpenGL " << majorVersion << "." << minorVersion
+     << ", " << (isGLES ? "ES " : "") << (isCoreProfile ? "core" : "compat")
+     << ", " << depthSize << " depth bits"
+     << ", " << (isDoubleBuffered ? "double buffered" : "")
+     << ", " << width << "x" << height;
 
-string GLContextParam::ToString() const {
-  const string major = to_string(majorVersion), minor = to_string(minorVersion);
-  const string version = "OpenGL " + major + "." + minor;
-  const string depth = to_string(depthSize) + " depth bits";
-  const string core = isCoreProfile ? "core" : "compat";
-  const string gles = isGLES ? "ES " : "";
-  const string doubleBuffered = isDoubleBuffered ? "double buffered" : "";
-
-  return version
-    + " " + gles + core
-    + ", " + depth
-    + ", " + doubleBuffered;
+  return ss.str();
 }
 
 bool GLContextParam::operator== (const GLContextParam& other) const {

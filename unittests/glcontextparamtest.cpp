@@ -68,10 +68,11 @@ SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 }
 
 SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
+  const int width = 800, height = 600;
 	GIVEN("An OpenGL 4.5 core profile context param") {
 		const int major = 4, minor = 5, depth = 24;
 		const bool core = true, gles = false, doubleBuffered = true;
-  	GLContextParam param(major, minor, depth, core, gles, doubleBuffered);
+  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -84,7 +85,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 	GIVEN("An OpenGL 3.0 compat profile context param") {
 		const int major = 3, minor = 0, depth = 24;
 		const bool core = false, gles = false, doubleBuffered = true;
-  	GLContextParam param(major, minor, depth, core, gles, doubleBuffered);
+  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -97,7 +98,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 	GIVEN("An OpenGL ES 3.1 compat profile context param") {
 		const int major = 3, minor = 1, depth = 24;
 		const bool core = false, gles = true, doubleBuffered = true;
-  	GLContextParam param(major, minor, depth, core, gles, doubleBuffered);
+  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -111,7 +112,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 	GIVEN("An OpenGL ES 2.1 core profile context param") {
 		const int major = 2, minor = 1, depth = 24;
 		const bool core = true, gles = true, doubleBuffered = true;
-  	GLContextParam param(major, minor, depth, core, gles, doubleBuffered);
+  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();

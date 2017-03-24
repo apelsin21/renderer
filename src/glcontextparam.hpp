@@ -1,23 +1,26 @@
 #ifndef GLCONTEXTPARAM_HPP
 #define GLCONTEXTPARAM_HPP
 
+#include <sstream>
+
 #include "icontextparam.hpp"
 
 class GLContextParam : public IContextParam<GLContextParam> {
 public:
-  int majorVersion, minorVersion, depthSize;
+  int majorVersion, minorVersion, depthSize, width, height;
   bool isCoreProfile, isGLES, isDoubleBuffered;
 
-  GLContextParam(int ma, int mi, int depth,
+  GLContextParam(int ma, int mi, int depth, int w, int h,
                  bool core, bool gles, bool doubleBuffered) :
       majorVersion(ma), minorVersion(mi), depthSize(depth),
       isCoreProfile(core), isGLES(gles), isDoubleBuffered(doubleBuffered) {}
 
-  GLContextParam(int ma, int mi, bool core, bool gles) :
-      majorVersion(ma), minorVersion(mi), depthSize(24),
-      isCoreProfile(core), isGLES(gles), isDoubleBuffered(true) {}
+  GLContextParam(int ma, int mi, int w, int h, bool core, bool gles) :
+      majorVersion(ma), minorVersion(mi), width(w), height(h),
+      depthSize(24), isCoreProfile(core), isGLES(gles), isDoubleBuffered(true) {}
 
-  GLContextParam() : majorVersion(0), minorVersion(0), depthSize(0),
+  GLContextParam() : majorVersion(0), minorVersion(0),
+    depthSize(0), width(0), height(0),
     isCoreProfile(false), isGLES(false), isDoubleBuffered(false) {}
 
   ~GLContextParam() {
