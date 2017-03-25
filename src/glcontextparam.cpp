@@ -14,7 +14,7 @@ void GLContextParam::SetResolution(int w, int h) {
 std::string GLContextParam::ToString() const {
   std::ostringstream ss;
   ss << "OpenGL " << major << "." << minor
-     << ", " << (gles ? "ES " : "") << (core ? "core" : "compat")
+     << " " << (gles ? "ES " : "") << (core ? "core" : "compat")
      << ", " << depth << " depth bits"
      << ", " << (doubleBuffered ? "double buffered" : "")
      << ", " << width << "x" << height;
@@ -23,10 +23,18 @@ std::string GLContextParam::ToString() const {
 }
 
 bool GLContextParam::operator== (const GLContextParam& other) const {
-  return *this == other;
+  return
+    major == other.major &&
+    minor == other.minor && 
+    depth == other.depth &&
+    width == other.width && 
+    height == other.height &&
+    core == other.core && 
+    gles == other.gles && 
+    doubleBuffered == other.doubleBuffered;
 }
 bool GLContextParam::operator!= (const GLContextParam& other) const {
-  return *this != other;
+  return !operator==(other);
 }
 bool GLContextParam::operator< (const GLContextParam& other) const {
   if(major < other.major) {

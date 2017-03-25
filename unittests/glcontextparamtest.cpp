@@ -11,11 +11,8 @@ SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
     vector<GLContextParam> unsorted = GetUnsortedContextVector();
 
 		WHEN("we don't sort the vector using STL sort") {
-      sort(unsorted.begin(), unsorted.end());
-
 			THEN("the unsorted vector isn't equal to a sorted vector") {
-        vector<GLContextParam> sorted = GetSortedContextVector();
-				REQUIRE(unsorted != sorted);
+				REQUIRE(unsorted != GetSortedContextVector());
 			}
     }
 		WHEN("we sort the vector using STL stable_sort") {
@@ -30,20 +27,20 @@ SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
 }
 
 SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
-	GIVEN("An OpenGL 2.1 context param") {
-  	GLContextParam param(2, 1, false, false);
+	GIVEN("An OpenGL 4.1 context param") {
+  	GLContextParam param(4, 1, false, false);
 
 		WHEN("we compare it with a default-constructed param") {
       GLContextParam defaultConstructedParam;
 
-			THEN("the OpenGL 2.1 context isn't equal to the default constructed context") {
+			THEN("the OpenGL 4.1 context isn't equal to the default constructed context") {
 				REQUIRE(param != defaultConstructedParam);
 			}
-			THEN("the OpenGL 2.1 context isn't less than the default constructed context") {
+			THEN("the OpenGL 4.1 context isn't less than the default constructed context") {
         const bool isLessThan = param < defaultConstructedParam;
 				REQUIRE(isLessThan == false);
 			}
-			THEN("the OpenGL 2.1 context is greater than the default constructed context") {
+			THEN("the OpenGL 4.1 context is greater than the default constructed context") {
 				REQUIRE(param > defaultConstructedParam);
 			}
 		}
@@ -74,7 +71,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 			const string paramAsString = param.ToString();
 
 			THEN("the string contains the correct data") {
-				REQUIRE(paramAsString == "OpenGL 4.5 core, 24 depth bits, double buffered");
+				REQUIRE(paramAsString == "OpenGL 4.5 core, 24 depth bits, double buffered, 800x600");
 			}
 		}
 	}
@@ -85,7 +82,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 			const string paramAsString = param.ToString();
 
 			THEN("the string contains the correct data") {
-				REQUIRE(paramAsString == "OpenGL 3.0 compat, 24 depth bits, double buffered");
+				REQUIRE(paramAsString == "OpenGL 3.0 compat, 24 depth bits, double buffered, 800x600");
 			}
 		}
 	}
@@ -96,7 +93,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 			const string paramAsString = param.ToString();
 
 			THEN("the string contains the correct data") {
-				REQUIRE(paramAsString == "OpenGL 3.1 ES compat, 24 depth bits, double buffered");
+				REQUIRE(paramAsString == "OpenGL 3.1 ES compat, 24 depth bits, double buffered, 800x600");
 			}
 		}
 	}
@@ -108,7 +105,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 			const string paramAsString = param.ToString();
 
 			THEN("the string contains the correct data") {
-				REQUIRE(paramAsString == "OpenGL 2.1 ES core, 24 depth bits, double buffered");
+				REQUIRE(paramAsString == "OpenGL 2.1 ES core, 24 depth bits, double buffered, 800x600");
 			}
 		}
 	}

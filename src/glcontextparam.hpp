@@ -3,6 +3,11 @@
 
 #include <sstream>
 
+//URGH, some gnu compiler versions define a major() and minor() macro,
+//and thus polluting our namespace...
+#undef major
+#undef minor
+
 #include "icontextparam.hpp"
 
 class GLContextParam : public IContextParam<GLContextParam> {
@@ -23,8 +28,8 @@ public:
 
   bool operator== (const GLContextParam& other) const;
   bool operator!= (const GLContextParam& other) const;
-  bool operator< (const GLContextParam& other) const;
-  bool operator> (const GLContextParam& other) const;
+  bool operator<  (const GLContextParam& other) const;
+  bool operator>  (const GLContextParam& other) const;
 
   std::string ToString() const;
 };
