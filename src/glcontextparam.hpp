@@ -7,26 +7,19 @@
 
 class GLContextParam : public IContextParam<GLContextParam> {
 public:
-  int majorVersion, minorVersion, depthSize, width, height;
-  bool isCoreProfile, isGLES, isDoubleBuffered;
+  int major = 3, minor = 0, depth = 24, width = 800, height = 600;
+  bool core = true, gles = false, doubleBuffered = true;
 
-  GLContextParam(int ma, int mi, int depth, int w, int h,
-                 bool core, bool gles, bool doubleBuffered) :
-      majorVersion(ma), minorVersion(mi), depthSize(depth),
-      isCoreProfile(core), isGLES(gles), isDoubleBuffered(doubleBuffered) {}
+  GLContextParam() {}
+  ~GLContextParam() {}
 
-  GLContextParam(int ma, int mi, int w, int h, bool core, bool gles) :
-      majorVersion(ma), minorVersion(mi), width(w), height(h),
-      depthSize(24), isCoreProfile(core), isGLES(gles), isDoubleBuffered(true) {}
-
-  GLContextParam() : majorVersion(0), minorVersion(0),
-    depthSize(0), width(0), height(0),
-    isCoreProfile(false), isGLES(false), isDoubleBuffered(false) {}
-
-  ~GLContextParam() {
-  }
+  GLContextParam(int ma, int mi, bool c, bool g) :
+    major(ma), minor(mi), core(c), gles(g) {}
 
   bool SupportsModernGL() const;
+
+  void SetVersion(int ma, int mi, bool c, bool g);
+  void SetResolution(int w, int h);
 
   bool operator== (const GLContextParam& other) const;
   bool operator!= (const GLContextParam& other) const;

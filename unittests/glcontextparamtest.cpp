@@ -31,12 +31,10 @@ SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
 
 SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 	GIVEN("An OpenGL 2.1 context param") {
-		const int major = 2, minor = 1, depth = 24;
-		const bool core = false, gles = false, doubleBuffered = true;
-  	GLContextParam param(major, minor, depth, core, gles, doubleBuffered);
+  	GLContextParam param(2, 1, false, false);
 
 		WHEN("we compare it with a default-constructed param") {
-      const GLContextParam defaultConstructedParam;
+      GLContextParam defaultConstructedParam;
 
 			THEN("the OpenGL 2.1 context isn't equal to the default constructed context") {
 				REQUIRE(param != defaultConstructedParam);
@@ -50,7 +48,7 @@ SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 			}
 		}
 		WHEN("we compare it with an equal context param") {
-      const GLContextParam equalParam(major, minor, depth, core, gles, doubleBuffered);
+      GLContextParam equalParam(param.major, param.minor, param.core, param.gles);
 
 			THEN("the contexts are equal") {
 				REQUIRE(param == equalParam);
@@ -68,11 +66,9 @@ SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 }
 
 SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
-  const int width = 800, height = 600;
+
 	GIVEN("An OpenGL 4.5 core profile context param") {
-		const int major = 4, minor = 5, depth = 24;
-		const bool core = true, gles = false, doubleBuffered = true;
-  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
+  	const GLContextParam param(4, 5, true, false);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -83,9 +79,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 		}
 	}
 	GIVEN("An OpenGL 3.0 compat profile context param") {
-		const int major = 3, minor = 0, depth = 24;
-		const bool core = false, gles = false, doubleBuffered = true;
-  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
+  	const GLContextParam param(3, 0, false, false);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -96,9 +90,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 		}
 	}
 	GIVEN("An OpenGL ES 3.1 compat profile context param") {
-		const int major = 3, minor = 1, depth = 24;
-		const bool core = false, gles = true, doubleBuffered = true;
-  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
+  	const GLContextParam param(3, 1, false, true);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();
@@ -110,9 +102,7 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 	}
 
 	GIVEN("An OpenGL ES 2.1 core profile context param") {
-		const int major = 2, minor = 1, depth = 24;
-		const bool core = true, gles = true, doubleBuffered = true;
-  	GLContextParam param(major, minor, width, height, depth, core, gles, doubleBuffered);
+  	const GLContextParam param(2, 1, true, true);
 
 		WHEN("we turn it into a string") {
 			const string paramAsString = param.ToString();

@@ -9,7 +9,7 @@ SCENARIO("SDL2Window creates an OpenGL context", "[SDL2Window]") {
 	GIVEN("An uninitialized SDL2 window") {
     SDL2Window window;
     std::vector<GLContextParam> params = {
-      GLContextParam(1, 0, 800, 600, false, false)
+      GLContextParam(1, 0, false, false)
     };
 
 		WHEN("we call intialize using a standard resolution") {

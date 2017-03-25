@@ -17,15 +17,15 @@ bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
   std::stable_sort(sortedParams.begin(), sortedParams.end());
 
   for(auto param : sortedParams) {
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, param.majorVersion);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, param.minorVersion);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, param.depthSize);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, param.isDoubleBuffered);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, param.major);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, param.minor);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, param.depth);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, param.doubleBuffered);
 
-    if(param.isCoreProfile) {
+    if(param.core) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     }
-    if(param.isGLES) {
+    if(param.gles) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     }
     

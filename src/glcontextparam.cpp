@@ -1,75 +1,76 @@
 #include "glcontextparam.hpp"
 
+void GLContextParam::SetVersion(int ma, int mi, bool c, bool g) {
+  major = ma;
+  minor = mi;
+  core = c;
+  gles = g;
+}
+void GLContextParam::SetResolution(int w, int h) {
+  width = w;
+  height = h;
+}
+
 std::string GLContextParam::ToString() const {
   std::ostringstream ss;
-  ss << "OpenGL " << majorVersion << "." << minorVersion
-     << ", " << (isGLES ? "ES " : "") << (isCoreProfile ? "core" : "compat")
-     << ", " << depthSize << " depth bits"
-     << ", " << (isDoubleBuffered ? "double buffered" : "")
+  ss << "OpenGL " << major << "." << minor
+     << ", " << (gles ? "ES " : "") << (core ? "core" : "compat")
+     << ", " << depth << " depth bits"
+     << ", " << (doubleBuffered ? "double buffered" : "")
      << ", " << width << "x" << height;
 
   return ss.str();
 }
 
 bool GLContextParam::operator== (const GLContextParam& other) const {
-  const bool equalMajor = majorVersion == other.majorVersion;
-  const bool equalMinor = minorVersion == other.minorVersion;
-  const bool equalVersion = equalMajor && equalMinor;
-  const bool equalDepthBits = depthSize == other.depthSize;
-
-  const bool equalCore = isCoreProfile == other.isCoreProfile;
-  const bool equalGLES = isGLES == other.isGLES;
-  const bool equalDoubleBuffered = isDoubleBuffered == other.isDoubleBuffered;
-
-  return equalVersion && equalCore && equalGLES && equalDoubleBuffered && equalDepthBits;
+  return *this == other;
 }
 bool GLContextParam::operator!= (const GLContextParam& other) const {
-  const bool areEqual = this == &other;
-  return areEqual == false;
+  return *this != other;
 }
 bool GLContextParam::operator< (const GLContextParam& other) const {
-  if(majorVersion < other.majorVersion) {
+  if(major < other.major) {
     return true;
-  } else if(majorVersion == other.majorVersion) {
-    if(minorVersion < other.minorVersion) {
+  } else if(major == other.major) {
+    if(minor < other.minor) {
       return true;
-    } else if(minorVersion > other.minorVersion) {
+    } else if(minor > other.minor) {
       return false;
     }
-  } else if(majorVersion > other.majorVersion) {
+  } else if(major > other.major) {
     return false;
   }
 
-  if(isCoreProfile < other.isCoreProfile) {
+  if(core < other.core) {
     return true;
   };
 
-  if(isGLES < other.isGLES) {
+  if(gles < other.gles) {
     return true;
   }
 
-  return isDoubleBuffered < other.isDoubleBuffered;
+  return doubleBuffered < other.doubleBuffered;
 }
 bool GLContextParam::operator> (const GLContextParam& other) const {
-  if(majorVersion > other.majorVersion) {
+  if(major > other.major) {
     return true;
-  } else if(majorVersion == other.majorVersion) {
-    if(minorVersion > other.minorVersion) {
+  } else if(major == other.major) {
+    if(minor > other.minor) {
       return true;
-    } else if(minorVersion < other.minorVersion) {
+    } else if(minor < other.minor) {
       return false;
     }
-  } else if(majorVersion < other.majorVersion) {
+  } else if(major < other.major) {
     return false;
   }
 
-  if(isCoreProfile > other.isCoreProfile) {
+  if(core > other.core) {
     return true;
   }
 
-  if(isGLES > other.isGLES) {
+  if(gles > other.gles) {
     return true;
   }
 
-  return isDoubleBuffered > other.isDoubleBuffered;
+  return doubleBuffered > other.doubleBuffered;
 }
