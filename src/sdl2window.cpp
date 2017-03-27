@@ -1,15 +1,5 @@
 #include "sdl2window.hpp"
 
-SDL2Window::~SDL2Window() {
-  if(m_sdlWindow) {
-    SDL_DestroyWindow(m_sdlWindow);
-  }
-
-  if(m_sdlContext) {
-    SDL_GL_DeleteContext(m_sdlContext);
-  }
-}
-
 bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
   bool createdContext = false;
 
@@ -29,23 +19,32 @@ bool SDL2Window::CreateContext(const std::vector<GLContextParam>& params) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     }
     
-    m_sdlWindow = SDL_CreateWindow("OpenGL Test",
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    	param.width, param.height, SDL_WINDOW_OPENGL);
+    m_sdlWindow = SDL2WindowHandle("OpenGL Test", 0, 0, param.width, param.height);
 
-    m_sdlContext = SDL_GL_CreateContext(m_sdlWindow);
+    if(m_sdlWindow.IsInvalid()) {
+      std::cerr << "SDL2Window failed to create. Error: "
+                << SDL_GetError() << std::endl;
+    }
 
-    if(m_sdlContext) {
-      createdContext = true;
+    m_sdlContext = SDL2ContextHandle(m_sdlWindow);
+
+    if(m_sdlContext.IsInvalid()) {
+      std::cerr << "SDL2Window failed to create a context using context " << param.ToString() << "\n SDL reported: "
+                << SDL_GetError() << std::endl;
+    }
+
+    createdContext = m_sdlContext.IsValid();
+
+    if(m_sdlContext.IsValid()) {
       m_contextParam = param;
       break;
     }
   }
 
-  if(!m_sdlWindow || !m_sdlContext) {
-    std::cerr << "SDL2Window failed to create an OpenGL context. Error: "
-         << SDL_GetError() << std::endl;
-  }
+  //if(m_sdlWindow.IsInvalid() || m_sdlContext.IsInvalid()) {
+  //  std::cerr << "SDL2Window failed to create an OpenGL context. Error: "
+  //            << SDL_GetError() << std::endl;
+  //}
 
   return createdContext;
 }
@@ -68,11 +67,9 @@ bool SDL2Window::MakeCurrent() {
   bool madeCurrent = false;
 
   if(SDL_WasInit(SDL_INIT_VIDEO)) {
-    int err = SDL_GL_MakeCurrent(m_sdlWindow, m_sdlContext);
+    madeCurrent = m_sdlContext.MakeCurrent(m_sdlWindow);
 
-    if(err == 0) {
-      madeCurrent = true;
-    } else {
+    if(!madeCurrent) {
       std::cout << "Failed to make SDL2 OpenGL context current. Error: "
            << SDL_GetError() << std::endl;
     }
@@ -82,5 +79,13 @@ bool SDL2Window::MakeCurrent() {
 }
 
 void SDL2Window::Display() {
-  SDL_GL_SwapWindow(m_sdlWindow);
+  m_sdlWindow.Swap();
+}
+
+GLContextParam SDL2Window::GetCurrentContextInfo() const {
+  GLContextParam info;
+
+  info.SetResolution(m_sdlWindow.GetWidth(), m_sdlWindow.GetHeight());
+
+  return info;
 }
