@@ -1,6 +1,3 @@
-#include <string>
-#include <iostream>
-
 #include "sdl2windowtest.hpp"
 
 using namespace std;
@@ -8,16 +5,16 @@ using namespace std;
 SCENARIO("SDL2Window creates an OpenGL context", "[SDL2Window]") {
 	GIVEN("An uninitialized SDL2 window") {
     SDL2Window window;
-    std::vector<GLContextParam> params = {
-      GLContextParam(3, 0, false, false)
-    };
+    GLContextParam param(2, 1, false, false);
 
 		WHEN("we call intialize using a standard resolution") {
       const bool initializedSuccessfully = window.Init();
-      const bool createdContext = window.CreateContext(params);
+      const bool createdContext = window.CreateContext(param);
 
 			THEN("initialization is successful") {
 				REQUIRE(initializedSuccessfully);
+			}
+			THEN("the context is valid") {
 				REQUIRE(createdContext);
 			}
 			THEN("the context is valid") {
@@ -30,7 +27,7 @@ SCENARIO("SDL2Window creates an OpenGL context", "[SDL2Window]") {
         }
 			}
 			THEN("the resulting context is as requested") {
-        REQUIRE(params[0] == window.GetCurrentContextInfo());
+        REQUIRE(param.ToString() == window.GetCurrentContextInfo().ToString());
 			}
 		}
 	}
