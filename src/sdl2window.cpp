@@ -17,8 +17,6 @@ bool SDL2Window::CreateContext(const GLContextParam& param) {
   
   SDL2WindowHandle window("OpenGL Test", -1, -1, param.width, param.height);
 
-	std::cout << "creating a window, param: " << param.ToString() << std::endl;
-
   if(window.IsValid()) {
 		SDL2ContextHandle context(window);
 
@@ -32,8 +30,6 @@ bool SDL2Window::CreateContext(const GLContextParam& param) {
 								<< SDL_GetError() << std::endl;
 			createdContext = false;
 		}
-
-		std::cout << "createdContext: " << createdContext << std::endl;
   } else {
     std::cerr << "SDL2Window failed to create an SDL Window. Error:\n"
               << SDL_GetError() << std::endl;
@@ -63,7 +59,7 @@ bool SDL2Window::MakeCurrent() {
     madeCurrent = m_contextHandle.MakeCurrent(m_windowHandle);
 
     if(!madeCurrent) {
-      std::cout << "Failed to make SDL2 OpenGL context current. Error: "
+      std::cerr << "Failed to make SDL2 OpenGL context current. Error: "
            << SDL_GetError() << std::endl;
     }
   }

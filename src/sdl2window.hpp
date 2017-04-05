@@ -36,8 +36,6 @@ class SDL2Window : public IWindow {
 					SDL_WINDOW_OPENGL
 				)
 			);
-
-			std::cout << "created window: " << m_window.get() << std::endl;
     }
 
     int GetWidth() const {
@@ -71,7 +69,6 @@ class SDL2Window : public IWindow {
 
     SDL2ContextHandle() {}
     SDL2ContextHandle(SDL2WindowHandle& window) {
-			std::cout << "context: " << window.GetRaw().get() << std::endl;
       m_context = SDL_GL_CreateContext(window.GetRawMut().get());
     }
     ~SDL2ContextHandle() {
@@ -88,7 +85,6 @@ class SDL2Window : public IWindow {
     }
 
     bool MakeCurrent(SDL2WindowHandle& window) {
-			std::cout << "make current: " << window.GetRaw().get() << std::endl;
       return SDL_GL_MakeCurrent(window.GetRawMut().get(), m_context) == 0;
     }
 
