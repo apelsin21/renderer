@@ -13,6 +13,7 @@
       pkgconfig
       valgrind
       gdb
+      apitrace
     ];
 	};
 }

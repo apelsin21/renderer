@@ -18,11 +18,23 @@ class CommandBucket {
 protected:
   std::map<Key, std::shared_ptr<Draw>> m_drawData;
 
-  std::shared_ptr<Draw> AllocateCommand() const;
-public:
-  CommandBucket(int numCommands);
+  std::shared_ptr<Draw> AllocateCommand() const {
+    return std::make_shared<Draw>();
+  }
 
-  std::shared_ptr<Draw> AddCommand(Key key);
+  int m_numCommands = 0;
+public:
+  CommandBucket(int numCommands) {
+    m_numCommands = numCommands;
+  }
+
+  std::shared_ptr<Draw> AddCommand(Key key) {
+    std::shared_ptr<Draw> data = AllocateCommand();
+
+    m_drawData[key] = data;
+
+    return data;
+  }
 };
 
 #endif
