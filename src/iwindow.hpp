@@ -5,9 +5,6 @@ class IWindow {
 public:
   virtual ~IWindow() {}
 
-  virtual bool Init() = 0;
-  virtual bool IsInitialized() const = 0;
-
   virtual void Display() = 0;
 protected:
   bool m_isInitialized;

@@ -12,105 +12,76 @@
 #include "glcontextparam.hpp"
 #include "iwindow.hpp"
 
+template<typename Creator, typename Destructor, typename... Arguments>
+auto MakeResource(Creator c, Destructor d, Arguments&&... args) {
+    auto r = c(std::forward<Arguments>(args)...);
+    if (!r) { throw std::system_error(errno, std::generic_category()); }
+    return std::unique_ptr<std::decay_t<decltype(*r)>, decltype(d)>(r, d);
+}
+
+namespace sdl2 {
+	using WindowHandlePtr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
+
+	inline WindowHandlePtr MakeWindow(const GLContextParam& param) {
+		SDL_Init(SDL_INIT_VIDEO);
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, param.major);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, param.minor);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,            param.depth);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,          param.doubleBuffered);
+
+		if(param.core) {
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		}
+		if(param.gles) {
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		}
+
+		return MakeResource(SDL_CreateWindow, SDL_DestroyWindow,
+			"", 0, 0, param.width, param.height, SDL_WINDOW_OPENGL);
+	}
+
+	class ContextHandle {
+	protected:
+			SDL_GLContext m_context;
+
+	public:
+		ContextHandle(sdl2::WindowHandlePtr& window) {
+			m_context = SDL_GL_CreateContext(window.get());
+
+			if(SDL_GL_MakeCurrent(window.get(), m_context) != 0) {
+				std::cout << "make current failed: " << SDL_GetError() << std::endl;
+			}
+		}
+		~ContextHandle() {
+			SDL_GL_DeleteContext(m_context);
+		}
+
+		void Swap(sdl2::WindowHandlePtr& window) {
+			SDL_GL_SwapWindow(window.get());
+		}
+	};
+}
+
 class SDL2Window : public IWindow {
-  struct SDL2WindowHandle {
-		struct SDLWindowDestroyer {
-		    void operator()(SDL_Window* w) const {
-		        SDL_DestroyWindow(w);
-		    }
-		};
-
-		std::unique_ptr<SDL_Window, SDLWindowDestroyer> m_window = nullptr;
-
-    SDL2WindowHandle() {}
-    SDL2WindowHandle(const std::string& title, int x, int y,
-                     int width, int height) {
-      x = x < 0 ? SDL_WINDOWPOS_UNDEFINED : x;
-      y = y < 0 ? SDL_WINDOWPOS_UNDEFINED : y;
-
-      m_window = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(
-				SDL_CreateWindow(
-					title.c_str(),
-					x, y,
-					width, height,
-					SDL_WINDOW_OPENGL
-				)
-			);
-    }
-
-    int GetWidth() const {
-      int width = 0;
-      SDL_GetWindowSize(m_window.get(), &width, NULL);
-      return width;
-    }
-    int GetHeight() const {
-      int height = 0;
-      SDL_GetWindowSize(m_window.get(), NULL, &height);
-      return height;
-    }
-
-    bool IsValid() const {
-      return m_window != nullptr;
-    }
-    bool IsInvalid() const {
-      return m_window == nullptr;
-    }
-
-    void Swap() {
-      SDL_GL_SwapWindow(m_window.get());
-    }
-
-    const auto& GetRaw() const { return m_window; }
-    auto& GetRawMut() const { return m_window; }
-  };
-
-  struct SDL2ContextHandle {
-    SDL_GLContext m_context = NULL;
-
-    SDL2ContextHandle() {}
-    SDL2ContextHandle(SDL2WindowHandle& window) {
-      m_context = SDL_GL_CreateContext(window.GetRawMut().get());
-    }
-    ~SDL2ContextHandle() {
-      if(SDL_WasInit(SDL_INIT_VIDEO) && m_context) {
-        SDL_GL_DeleteContext(m_context);
-      }
-    }
-
-    bool IsValid() const {
-      return m_context != NULL;
-    }
-    bool IsInvalid() const {
-      return m_context == NULL;
-    }
-
-    bool MakeCurrent(SDL2WindowHandle& window) {
-      return SDL_GL_MakeCurrent(window.GetRawMut().get(), m_context) == 0;
-    }
-
-    const SDL_GLContext GetRaw() const { return m_context; }
-    SDL_GLContext GetRawMut() const { return m_context; }
-  };
 protected:
-  SDL2WindowHandle m_windowHandle;
-  SDL2ContextHandle m_contextHandle;
+  sdl2::WindowHandlePtr m_sdlWindowHandle;
+  sdl2::ContextHandle m_sdlContextHandle;
   GLContextParam m_contextParam;
 public:
-  SDL2Window() {}
-
-  bool Init();
-  bool IsInitialized() const;
-  void Deinit();
-
-  bool MakeCurrent();
-
-  bool CreateContext(const GLContextParam& param);
+  SDL2Window(const GLContextParam& param)
+		: m_sdlWindowHandle(sdl2::MakeWindow(param)),
+			m_sdlContextHandle(m_sdlWindowHandle) {
+  
+		m_contextParam = param;
+	}
+  ~SDL2Window() {
+		SDL_Quit();
+  }
 
   GLContextParam GetContextParam() const {
     return m_contextParam;
   }
-
-  GLContextParam GetCurrentContextInfo() const;
 
   void Display();
 };
