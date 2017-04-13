@@ -14,7 +14,8 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
 			}
       THEN("testing things!") {
 				GLContextParam param(3, 0, false, false);
-				SDL2Window window(param);
+				SDL2Window window;
+        REQUIRE(window.initialize(param));
 
         GLShaderProgram program;
 
@@ -55,13 +56,23 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
 				clock_t begin = clock();
 				double diff = 0;
 
+        auto onWindowExit = [&]() {
+          window.deinitialize();
+        };
+        auto onWindowResized = [&](int width, int height) {
+          std::cout << "window resized to " << width << "x" << height << std::endl;
+        };
+        auto onWindowMoved = [&](int x, int y) {
+          std::cout << "window moved to " << x << "." << y << std::endl;
+        };
+
 				glClearColor(0.f, 0.0f, 0.0f, 1.0f);
-				while(diff < 0.005) {
+				while(window.is_initialized()) {
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 					glDrawArrays(GL_TRIANGLES, 0, 3);
 
 					window.Display();
-					diff = double(clock() - begin) / CLOCKS_PER_SEC;
+          window.consume_event(onWindowExit, onWindowResized, onWindowMoved);
 				}
 
 				glDisableVertexAttribArray(0);

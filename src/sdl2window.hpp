@@ -12,78 +12,116 @@
 #include "glcontextparam.hpp"
 #include "iwindow.hpp"
 
-template<typename Creator, typename Destructor, typename... Arguments>
-auto MakeResource(Creator c, Destructor d, Arguments&&... args) {
-    auto r = c(std::forward<Arguments>(args)...);
-    if (!r) { throw std::system_error(errno, std::generic_category()); }
-    return std::unique_ptr<std::decay_t<decltype(*r)>, decltype(d)>(r, d);
-}
-
 namespace sdl2 {
-	using WindowHandlePtr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
+	struct SDLWindowDestroyer {
+			void operator()(SDL_Window* w) const {
+					SDL_DestroyWindow(w);
+			}
+	};
 
-	inline WindowHandlePtr MakeWindow(const GLContextParam& param) {
-		SDL_Init(SDL_INIT_VIDEO);
-
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, param.major);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, param.minor);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,            param.depth);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,          param.doubleBuffered);
-
-		if(param.core) {
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		}
-		if(param.gles) {
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-		}
-
-		return MakeResource(SDL_CreateWindow, SDL_DestroyWindow,
-			"", 0, 0, param.width, param.height, SDL_WINDOW_OPENGL);
-	}
+	using window_ptr = std::unique_ptr<SDL_Window, SDLWindowDestroyer>;
 
 	class ContextHandle {
 	protected:
 			SDL_GLContext m_context;
-
+			bool m_initialized = false;
 	public:
-		ContextHandle(sdl2::WindowHandlePtr& window) {
-			m_context = SDL_GL_CreateContext(window.get());
+		ContextHandle() {
+		}
 
-			if(SDL_GL_MakeCurrent(window.get(), m_context) != 0) {
-				std::cout << "make current failed: " << SDL_GetError() << std::endl;
+		bool initialize(sdl2::window_ptr& window) {
+			bool ok = false;
+			SDL_GLContext context = SDL_GL_CreateContext(window.get());
+
+			if(context) {
+				if(SDL_GL_MakeCurrent(window.get(), context) == 0) {
+					ok = true;
+					m_context = context;
+					m_initialized = true;
+				} else {
+					std::cerr << "SDL failed to make context current: " << SDL_GetError() << std::endl;
+				}
+			} else {
+				std::cerr << "SDL failed to create context: " << SDL_GetError() << std::endl;
+			}
+
+			return ok;
+		}
+		void deinitialize() {
+			if(m_initialized) {
+				if(m_context) {
+					SDL_GL_DeleteContext(m_context);
+				}
+
+				m_initialized = false;
 			}
 		}
+
 		~ContextHandle() {
-			SDL_GL_DeleteContext(m_context);
+			if(m_initialized) {
+				SDL_GL_DeleteContext(m_context);
+			}
 		}
 
-		void Swap(sdl2::WindowHandlePtr& window) {
+		void Swap(sdl2::window_ptr& window) {
 			SDL_GL_SwapWindow(window.get());
 		}
 	};
 }
 
-class SDL2Window : public IWindow {
+class IConsumer {
+	protected:
+	public:
+};
+
+class SDL2Window : public IWindow, public IConsumer {
 protected:
-  sdl2::WindowHandlePtr m_sdlWindowHandle;
+  sdl2::window_ptr m_sdlWindowHandle;
   sdl2::ContextHandle m_sdlContextHandle;
   GLContextParam m_contextParam;
+  bool m_initialized = false;
 public:
-  SDL2Window(const GLContextParam& param)
-		: m_sdlWindowHandle(sdl2::MakeWindow(param)),
-			m_sdlContextHandle(m_sdlWindowHandle) {
-  
-		m_contextParam = param;
+  SDL2Window() {
 	}
   ~SDL2Window() {
-		SDL_Quit();
+    if(m_initialized) {
+      SDL_Quit();
+    }
   }
+
+	bool is_initialized() const { return m_initialized; }
+  bool initialize(const GLContextParam& param);
+	void deinitialize();
 
   GLContextParam GetContextParam() const {
     return m_contextParam;
   }
 
   void Display();
+
+	void consume_event(std::function<void()> on_exit,
+										 std::function<void(int width, int height)> on_resized,
+										 std::function<void(int x, int y)> on_move) {
+		SDL_Event event;
+
+		while(SDL_PollEvent(&event)) {
+			if(event.type == SDL_WINDOWEVENT) {
+				switch(event.window.event) {
+					case SDL_WINDOWEVENT_CLOSE:
+						on_exit();
+						break;
+					case SDL_WINDOWEVENT_SIZE_CHANGED:
+						on_resized(event.window.data1, event.window.data2);
+						break;
+					case SDL_WINDOWEVENT_MOVED:
+						on_move(event.window.data1, event.window.data2);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
 };
 
 #endif
