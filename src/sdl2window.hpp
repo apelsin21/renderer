@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include "epoxy/gl.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -99,29 +100,19 @@ public:
 
   void Display();
 
-	void consume_event(std::function<void()> on_exit,
-										 std::function<void(int width, int height)> on_resized,
-										 std::function<void(int x, int y)> on_move) {
-		SDL_Event event;
-
-		while(SDL_PollEvent(&event)) {
-			if(event.type == SDL_WINDOWEVENT) {
-				switch(event.window.event) {
-					case SDL_WINDOWEVENT_CLOSE:
-						on_exit();
-						break;
-					case SDL_WINDOWEVENT_SIZE_CHANGED:
-						on_resized(event.window.data1, event.window.data2);
-						break;
-					case SDL_WINDOWEVENT_MOVED:
-						on_move(event.window.data1, event.window.data2);
-						break;
-					default:
-						break;
-				}
-			}
-		}
-	}
+  void consume_events(std::function<void()> on_exit,
+                      std::function<void(int width, int height)> on_resize,
+                      std::function<void(int x, int y)> on_move,
+                      std::function<void()> on_maximize,
+                      std::function<void()> on_minimize,
+                      std::function<void()> on_show,
+                      std::function<void()> on_hide,
+                      std::function<void()> on_expose,
+                      std::function<void()> on_mouse_enter,
+                      std::function<void()> on_mouse_leave,
+                      std::function<void()> on_focus,
+                      std::function<void()> on_blur,
+                      std::function<void()> on_restore);
 };
 
 #endif

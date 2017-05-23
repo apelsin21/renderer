@@ -72,6 +72,8 @@ public:
   bool Load(const std::string& vertexShaderLocation,
             const std::string& fragmentShaderLocation);
 
+  unsigned int GetProgramId() const;
+
 	void Use();
 };
 

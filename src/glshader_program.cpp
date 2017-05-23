@@ -88,6 +88,10 @@ bool GLShaderProgram::Load(const std::string& vertexShaderLocation,
   return loadedSuccessfully;
 }
 
+unsigned int GLShaderProgram::GetProgramId() const {
+  return m_programHandle.id;
+}
+
 void GLShaderProgram::Use() {
   glUseProgram(m_programHandle.id);
 }

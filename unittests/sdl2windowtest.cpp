@@ -8,7 +8,7 @@ SCENARIO("SDL2Window creates an OpenGL context", "[SDL2Window]") {
 
 		WHEN("we call intialize using a standard resolution") {
 			THEN("the context is valid") {
-        REQUIRE(window.initialize(GLContextParam(2, 1, false, false)));
+        REQUIRE(window.initialize(GLContextParam("test", 2, 1, false, false)));
         const GLuint program = glCreateProgram();
         const bool isProgram = glIsProgram(program);
         REQUIRE(isProgram);

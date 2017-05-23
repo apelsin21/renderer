@@ -16,7 +16,6 @@ template <typename T>
 class CommandBucket {
   typedef T Key;
 protected:
-  std::map<Key, std::shared_ptr<Draw>> m_drawData;
 
   std::shared_ptr<Draw> AllocateCommand() const {
     return std::make_shared<Draw>();
@@ -24,6 +23,8 @@ protected:
 
   int m_numCommands = 0;
 public:
+  std::map<Key, std::shared_ptr<Draw>> m_drawData;
+
   CommandBucket(int numCommands) {
     m_numCommands = numCommands;
   }

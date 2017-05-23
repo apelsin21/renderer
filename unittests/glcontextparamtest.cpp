@@ -8,18 +8,18 @@ using namespace std;
 
 SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
 	GIVEN("An unsorted vector") {
-    vector<GLContextParam> unsorted = GetUnsortedContextVector();
+    vector<GLContextParam> unsorted = get_unsorted_context_vector();
 
 		WHEN("we don't sort the vector using STL sort") {
 			THEN("the unsorted vector isn't equal to a sorted vector") {
-				REQUIRE(unsorted != GetSortedContextVector());
+				REQUIRE(unsorted != get_sorted_context_vector());
 			}
     }
 		WHEN("we sort the vector using STL stable_sort") {
       stable_sort(unsorted.begin(), unsorted.end());
 
 			THEN("the previously unsorted vector is equal to a hand-sorted vector") {
-        vector<GLContextParam> sorted = GetSortedContextVector();
+        vector<GLContextParam> sorted = get_sorted_context_vector();
 				REQUIRE(unsorted == sorted);
 			}
     }
@@ -28,7 +28,7 @@ SCENARIO("GLContextParams can be sorted", "[GLContextParam]") {
 
 SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 	GIVEN("An OpenGL 4.1 context param") {
-  	GLContextParam param(4, 1, false, false);
+  	GLContextParam param("test", 4, 1, false, false);
 
 		WHEN("we compare it with a default-constructed param") {
       GLContextParam defaultConstructedParam;
@@ -45,7 +45,7 @@ SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 			}
 		}
 		WHEN("we compare it with an equal context param") {
-      GLContextParam equalParam(param.major, param.minor, param.core, param.gles);
+      GLContextParam equalParam("test", param.major, param.minor, param.core, param.gles);
 
 			THEN("the contexts are equal") {
 				REQUIRE(param == equalParam);
@@ -65,10 +65,10 @@ SCENARIO("GLContextParams can be compared", "[GLContextParam]") {
 SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 
 	GIVEN("An OpenGL 4.5 core profile context param") {
-  	const GLContextParam param(4, 5, true, false);
+  	const GLContextParam param("test", 4, 5, true, false);
 
 		WHEN("we turn it into a string") {
-			const string paramAsString = param.ToString();
+			const string paramAsString = param.to_string();
 
 			THEN("the string contains the correct data") {
 				REQUIRE(paramAsString == "OpenGL 4.5 core, 24 depth bits, double buffered, 800x600");
@@ -76,10 +76,10 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 		}
 	}
 	GIVEN("An OpenGL 3.0 compat profile context param") {
-  	const GLContextParam param(3, 0, false, false);
+  	const GLContextParam param("test", 3, 0, false, false);
 
 		WHEN("we turn it into a string") {
-			const string paramAsString = param.ToString();
+			const string paramAsString = param.to_string();
 
 			THEN("the string contains the correct data") {
 				REQUIRE(paramAsString == "OpenGL 3.0 compat, 24 depth bits, double buffered, 800x600");
@@ -87,10 +87,10 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 		}
 	}
 	GIVEN("An OpenGL ES 3.1 compat profile context param") {
-  	const GLContextParam param(3, 1, false, true);
+  	const GLContextParam param("test", 3, 1, false, true);
 
 		WHEN("we turn it into a string") {
-			const string paramAsString = param.ToString();
+			const string paramAsString = param.to_string();
 
 			THEN("the string contains the correct data") {
 				REQUIRE(paramAsString == "OpenGL 3.1 ES compat, 24 depth bits, double buffered, 800x600");
@@ -99,10 +99,10 @@ SCENARIO("GLContextParams can be stringified", "[GLContextParam]") {
 	}
 
 	GIVEN("An OpenGL ES 2.1 core profile context param") {
-  	const GLContextParam param(2, 1, true, true);
+  	const GLContextParam param("test", 2, 1, true, true);
 
 		WHEN("we turn it into a string") {
-			const string paramAsString = param.ToString();
+			const string paramAsString = param.to_string();
 
 			THEN("the string contains the correct data") {
 				REQUIRE(paramAsString == "OpenGL 2.1 ES core, 24 depth bits, double buffered, 800x600");

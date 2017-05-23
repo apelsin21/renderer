@@ -1,17 +1,17 @@
 #include "glcontextparam.hpp"
 
-void GLContextParam::SetVersion(int ma, int mi, bool c, bool g) {
+void GLContextParam::set_version(int ma, int mi, bool c, bool g) {
   major = ma;
   minor = mi;
   core = c;
   gles = g;
 }
-void GLContextParam::SetResolution(int w, int h) {
+void GLContextParam::set_resolution(int w, int h) {
   width = w;
   height = h;
 }
 
-std::string GLContextParam::ToString() const {
+std::string GLContextParam::to_string() const {
   std::ostringstream ss;
   ss << "OpenGL " << major << "." << minor
      << " " << (gles ? "ES " : "") << (core ? "core" : "compat")
