@@ -5,7 +5,7 @@
 
 #include "texture.hpp"
 #include "commandbucket.hpp"
-#include "vertex_buffer.hpp"
+#include "mesh.hpp"
 
 template <typename GraphicsBackend>
 class GraphicsDevice {
@@ -13,7 +13,7 @@ class GraphicsDevice {
 
 public:
   typedef Texture<GraphicsBackend> TextureType;
-  typedef VertexBuffer<GraphicsBackend> VertexBufferType;
+  typedef Mesh<GraphicsBackend> MeshType;
 
   template <typename... Args>
   bool Initialize(Args&&... args) {
@@ -38,15 +38,15 @@ public:
     m_backend.Submit(bucket);
   }
 
-  template <typename... Args>
-  TextureType CreateTexture(Args&&... args) {
-    return TextureType { m_backend, std::forward(args)... };
-  }
+  //template <typename... Args>
+  //TextureType CreateTexture(Args&&... args) {
+  //  return TextureType { m_backend, std::forward(args)... };
+  //}
 
-  template <typename... Args>
-  VertexBufferType CreateVertexBuffer(Args&&... args) {
-    return VertexBufferType { m_backend, std::forward(args)... };
-  }
+  //template <typename... Args>
+  //VertexBufferType CreateVertexBuffer(Args&&... args) {
+  //  return VertexBufferType { m_backend, std::forward(args)... };
+  //}
   
   template <typename Resource, typename... Args>
   Resource Create(Args&&... args) {

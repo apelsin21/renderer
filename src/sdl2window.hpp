@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <functional>
 #include "epoxy/gl.h"
 
 #include <SDL2/SDL.h>

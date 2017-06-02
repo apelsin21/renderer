@@ -13,7 +13,7 @@
 #include "glbackend.hpp"
 #include "graphicsdevice.hpp"
 #include "texture.hpp"
-#include "vertex_buffer.hpp"
+#include "mesh.hpp"
 
 class GLGraphicsDevice : public GraphicsDevice<GLBackend> {
 public:

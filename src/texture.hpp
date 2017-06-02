@@ -21,14 +21,14 @@ public:
   }
   ~Texture() {
     // should check if it is a valid handle first
-    m_backend.Destroy(m_handle);
+    m_backend.DestroyTexture(m_handle);
   }
 
-  void Load(const Image& image) {
-    m_backend.Load(m_handle, image);
+  bool Load(const Image& image) {
+    return m_backend.Load(m_handle, image);
   }
 
-  TextureHandle& GetHandle() const {
+  TextureHandle GetHandle() const {
     return m_handle;
   }
 };

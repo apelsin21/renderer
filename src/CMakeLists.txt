@@ -8,7 +8,7 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/graphicsdevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sdl2window.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/texture.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/vertex_buffer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
 
   PARENT_SCOPE
 )
@@ -26,7 +26,7 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/iwindow.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sdl2window.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/texture.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/vertex_buffer.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh.hpp
 
   PARENT_SCOPE
 )

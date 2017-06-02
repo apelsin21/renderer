@@ -1,7 +1,11 @@
 #version 130
 
+in vec2 uv;
+
 out vec3 color;
 
+uniform sampler2D texSampler;
+
 void main() {
-	color = vec3(0, 1, 1);
+	color = texture(texSampler, uv).rgb;
 }

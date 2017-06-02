@@ -5,7 +5,8 @@
 #include "commandbucket.hpp"
 #include "texture.hpp"
 
-#include "epoxy/gl.h"
+#include <epoxy/gl.h>
+#include <FreeImage.h>
 
 class GLBackend {
 protected:
@@ -27,18 +28,23 @@ public:
 
   void Display();
   
-  void Load(TextureHandleType& texture, const Image& image);
+  bool Load(TextureHandleType& texture, const Image& image);
 
   void Load(
       VertexBufferHandleType& buffer,
       VertexLayoutHandleType& layout,
       const std::vector<float>& vertices);
-  
-  void Destroy(TextureHandleType& texture);
 
-  void Destroy(
-      VertexBufferHandleType& buffer,
-      VertexLayoutHandleType& layout);
+  void Load(
+      VertexBufferHandleType& posBuffer,
+      VertexBufferHandleType& uvBuffer,
+      VertexLayoutHandleType& layout,
+      const std::vector<float>& vertices,
+      const std::vector<float>& uvs);
+  
+  void DestroyTexture(TextureHandleType& texture);
+  void DestroyVertexBuffer(VertexBufferHandleType& buffer);
+  void DestroyVertexLayout(VertexLayoutHandleType& layout);
 
   void Submit(const CommandBucket<unsigned>& bucket);
 };

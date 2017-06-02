@@ -21,25 +21,41 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
 
         device.EnableFeature(GLGraphicsDevice::feature::texturing);
         Texture<GLBackend> texture = device.Create<decltype(device)::TextureType>();
-        texture.Load({"data/textures/brick_wall.png"});
+				const bool textureLoadedOk = texture.Load({"test.png"});
+        REQUIRE(textureLoadedOk);
 
-        VertexBuffer<GLBackend> buffer = device.Create<decltype(device)::VertexBufferType>();
-        buffer.Load({
-          -1.0f, -1.0f, 0.0f,
-           1.0f, -1.0f, 0.0f,
-           0.0f,  1.0f, 0.0f
-        });
+        const std::vector<float> positions = {
+          -1.0f, -1.0f, //BL
+           1.0f, -1.0f, //BR
+          -1.0f,  1.0f, //TL
 
-        call->vboID = buffer.GetBufferHandle();
-        call->vaoID = buffer.GetLayoutHandle();
+          -1.0f,  1.0f, //TL
+           1.0f,  1.0f, //TR
+           1.0f, -1.0f, //BR
+        };
+        const std::vector<float> uvs = {
+           0.0f,  0.0f, //BL
+           1.0f,  0.0f, //BR
+           0.0f,  1.0f, //TL
+
+           0.0f,  1.0f, //TL
+           1.0f,  1.0f, //TR
+           1.0f,  0.0f, //BR
+        };
+
+        Mesh<GLBackend> mesh = device.Create<decltype(device)::MeshType>();
+        mesh.Load(positions, uvs);
 
         GLShaderProgram program;
-        call->shaderProgram = program.GetProgramId();
-        REQUIRE(glIsProgram(call->shaderProgram));
         REQUIRE(program.Load("vs.glsl", "fs.glsl"));
 
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        call->vaoID = mesh.GetLayoutHandle();
+        call->shaderProgram = program.GetProgramId();
+        call->textureID = texture.GetHandle();
+        call->startVertex = 0;
+        call->vertexCount = positions.size() / 2;
+
+        REQUIRE(glIsProgram(call->shaderProgram));
 
 				clock_t begin = clock();
 				double diff = 0;
@@ -47,6 +63,7 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
         bool run = true;
 
 				glClearColor(0.f, 0.0f, 0.0f, 1.0f);
+
 				while(run) {
 					device.Submit(bucket);
 					device.Display();
