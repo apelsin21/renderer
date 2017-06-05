@@ -1,11 +1,11 @@
 #ifndef GRAPHICSDEVICE_HPP
 #define GRAPHICSDEVICE_HPP
 
-#include "epoxy/gl.h"
-
 #include "texture.hpp"
 #include "commandbucket.hpp"
 #include "mesh.hpp"
+#include "shader.hpp"
+#include "shader_program.hpp"
 
 template <typename GraphicsBackend>
 class GraphicsDevice {
@@ -14,6 +14,8 @@ class GraphicsDevice {
 public:
   typedef Texture<GraphicsBackend> TextureType;
   typedef Mesh<GraphicsBackend> MeshType;
+  typedef Shader<GraphicsBackend> ShaderType;
+  typedef ShaderProgram<GraphicsBackend> ShaderProgramType;
 
   template <typename... Args>
   bool Initialize(Args&&... args) {
@@ -38,19 +40,9 @@ public:
     m_backend.Submit(bucket);
   }
 
-  //template <typename... Args>
-  //TextureType CreateTexture(Args&&... args) {
-  //  return TextureType { m_backend, std::forward(args)... };
-  //}
-
-  //template <typename... Args>
-  //VertexBufferType CreateVertexBuffer(Args&&... args) {
-  //  return VertexBufferType { m_backend, std::forward(args)... };
-  //}
-  
   template <typename Resource, typename... Args>
   Resource Create(Args&&... args) {
-    return Resource { m_backend, std::forward(args)... };
+    return Resource { m_backend, args... };
   }
 private:
   GraphicsBackend m_backend;

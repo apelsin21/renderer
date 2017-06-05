@@ -4,6 +4,11 @@
 #include "sdl2window.hpp"
 #include "commandbucket.hpp"
 #include "texture.hpp"
+#include "shader.hpp"
+#include "shader_program.hpp"
+
+#include <iostream>
+#include <fstream>
 
 #include <epoxy/gl.h>
 #include <FreeImage.h>
@@ -16,6 +21,8 @@ public:
   typedef GLuint TextureHandleType;
   typedef GLuint VertexBufferHandleType;
   typedef GLuint VertexLayoutHandleType;
+  typedef GLuint ShaderHandleType;
+  typedef GLuint ShaderProgramHandleType;
 
   template <typename... Args>
   void ConsumeEvents(Args&&... args) {
@@ -29,6 +36,8 @@ public:
   void Display();
   
   bool Load(TextureHandleType& texture, const Image& image);
+  bool Load(ShaderHandleType& shader, ShaderType type, const std::string& path);
+  bool Load(ShaderProgramHandleType& program, const Shader<GLBackend>& vs, const Shader<GLBackend>& fs);
 
   void Load(
       VertexBufferHandleType& buffer,
@@ -45,6 +54,8 @@ public:
   void DestroyTexture(TextureHandleType& texture);
   void DestroyVertexBuffer(VertexBufferHandleType& buffer);
   void DestroyVertexLayout(VertexLayoutHandleType& layout);
+  void DestroyShader(ShaderHandleType& shader);
+  void DestroyShaderProgram(ShaderProgramHandleType& program);
 
   void Submit(const CommandBucket<unsigned>& bucket);
 };

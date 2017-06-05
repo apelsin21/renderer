@@ -5,15 +5,14 @@
 
 #include "epoxy/gl.h"
 
-#include <ctime>
-
 #include "commandbucket.hpp"
 #include "sdl2window.hpp"
-#include "glshader_program.hpp"
 #include "glbackend.hpp"
 #include "graphicsdevice.hpp"
 #include "texture.hpp"
 #include "mesh.hpp"
+#include "shader.hpp"
+#include "shader_program.hpp"
 
 class GLGraphicsDevice : public GraphicsDevice<GLBackend> {
 public:
