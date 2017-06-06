@@ -12,23 +12,34 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
     CommandBucket<unsigned> bucket(2048);
 
 		WHEN("we create a new drawcall") {
-      shared_ptr<Draw> call = bucket.AddCommand(1u);
+      shared_ptr<Draw> leftCall = bucket.AddCommand(1u);
+      shared_ptr<Draw> rightCall = bucket.AddCommand(2u);
 
       THEN("testing things!") {
         REQUIRE(device.Initialize(GLContextParam("Test Window", 3, 0, false, false)));
 
         Texture<GLBackend> texture = device.Create<decltype(device)::TextureType>();
-        Mesh<GLBackend> mesh = device.Create<decltype(device)::MeshType>();
+        Mesh<GLBackend> leftMesh = device.Create<decltype(device)::MeshType>();
+        Mesh<GLBackend> rightMesh = device.Create<decltype(device)::MeshType>();
         Shader<GLBackend> vertexShader = device.Create<decltype(device)::ShaderType>(ShaderType::Vertex);
         Shader<GLBackend> fragmentShader = device.Create<decltype(device)::ShaderType>(ShaderType::Fragment);
         ShaderProgram<GLBackend> shaderProgram = device.Create<decltype(device)::ShaderProgramType>();
 
-        const std::vector<float> positions = {
+        const std::vector<float> leftPositions = {
           -1.0f, -1.0f, //BL
-           1.0f, -1.0f, //BR
+           0.0f, -1.0f, //BR
           -1.0f,  1.0f, //TL
 
           -1.0f,  1.0f, //TL
+           0.0f,  1.0f, //TR
+           0.0f, -1.0f, //BR
+        };
+        const std::vector<float> rightPositions = {
+           0.0f, -1.0f, //BL
+           1.0f, -1.0f, //BR
+           0.0f,  1.0f, //TL
+
+           0.0f,  1.0f, //TL
            1.0f,  1.0f, //TR
            1.0f, -1.0f, //BR
         };
@@ -42,17 +53,24 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
            1.0f,  0.0f, //BR
         };
 
-        mesh.Load(positions, uvs);
+        leftMesh.Load(leftPositions, uvs);
+        rightMesh.Load(rightPositions, uvs);
         REQUIRE(vertexShader.Load("vs.glsl"));
         REQUIRE(fragmentShader.Load("fs.glsl"));
         REQUIRE(shaderProgram.Load(vertexShader, fragmentShader));
         REQUIRE(texture.Load({"testbild.jpg"}));
 
-        call->vaoID = mesh.GetLayoutHandle();
-        call->shaderProgram = shaderProgram.GetHandle();
-        call->textureID = texture.GetHandle();
-        call->startVertex = 0;
-        call->vertexCount = positions.size() / 2;
+        leftCall->vaoID = leftMesh.GetLayoutHandle();
+        leftCall->shaderProgram = shaderProgram.GetHandle();
+        leftCall->textureID = texture.GetHandle();
+        leftCall->startVertex = 0;
+        leftCall->vertexCount = leftPositions.size() / 2;
+
+        rightCall->vaoID = rightMesh.GetLayoutHandle();
+        rightCall->shaderProgram = shaderProgram.GetHandle();
+        rightCall->textureID = texture.GetHandle();
+        rightCall->startVertex = 0;
+        rightCall->vertexCount = rightPositions.size() / 2;
 
 				glClearColor(0.f, 0.0f, 0.0f, 1.0f);
 

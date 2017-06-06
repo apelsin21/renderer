@@ -9,7 +9,7 @@
 struct Draw {
   unsigned int vertexCount, startVertex;
 
-  GLuint vaoID, vboID, shaderProgram, textureID;
+  GLuint vaoID, shaderProgram, textureID;
 };
 
 template <typename T>
