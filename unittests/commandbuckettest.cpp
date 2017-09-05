@@ -25,25 +25,25 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
         Shader<GLBackend> fragmentShader = device.Create<decltype(device)::ShaderType>(ShaderType::Fragment);
         ShaderProgram<GLBackend> shaderProgram = device.Create<decltype(device)::ShaderProgramType>();
 
-        const std::vector<float> leftPositions = {
-          -1.0f, -1.0f, //BL
-           0.0f, -1.0f, //BR
-          -1.0f,  1.0f, //TL
+        const vector<float> leftPositions = {
+          -1.0f, -1.0f, 0.0f, //BL
+           0.0f, -1.0f, 0.0f, //BR
+          -1.0f,  1.0f, 0.0f, //TL
 
-          -1.0f,  1.0f, //TL
-           0.0f,  1.0f, //TR
-           0.0f, -1.0f, //BR
+          -1.0f,  1.0f, 0.0f, //TL
+           0.0f,  1.0f, 0.0f, //TR
+           0.0f, -1.0f, 0.0f, //BR
         };
-        const std::vector<float> rightPositions = {
-           0.0f, -1.0f, //BL
-           1.0f, -1.0f, //BR
-           0.0f,  1.0f, //TL
+        const vector<float> rightPositions = {
+           0.0f, -1.0f, 0.0f, //BL
+           1.0f, -1.0f, 0.0f, //BR
+           0.0f,  1.0f, 0.0f, //TL
 
-           0.0f,  1.0f, //TL
-           1.0f,  1.0f, //TR
-           1.0f, -1.0f, //BR
+           0.0f,  1.0f, 0.0f, //TL
+           1.0f,  1.0f, 0.0f, //TR
+           1.0f, -1.0f, 0.0f, //BR
         };
-        const std::vector<float> uvs = {
+        const vector<float> uvs = {
            0.0f,  0.0f, //BL
            1.0f,  0.0f, //BR
            0.0f,  1.0f, //TL
@@ -64,13 +64,13 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
         leftCall->shaderProgram = shaderProgram.GetHandle();
         leftCall->textureID = texture.GetHandle();
         leftCall->startVertex = 0;
-        leftCall->vertexCount = leftPositions.size() / 2;
+        leftCall->vertexCount = leftPositions.size() / 3;
 
         rightCall->vaoID = rightMesh.GetLayoutHandle();
         rightCall->shaderProgram = shaderProgram.GetHandle();
         rightCall->textureID = texture.GetHandle();
         rightCall->startVertex = 0;
-        rightCall->vertexCount = rightPositions.size() / 2;
+        rightCall->vertexCount = rightPositions.size() / 3;
 
 				glClearColor(0.f, 0.0f, 0.0f, 1.0f);
 

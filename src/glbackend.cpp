@@ -3,7 +3,7 @@
 void GLBackend::Submit(const CommandBucket<unsigned>& bucket) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  for(auto const& pair : bucket.m_drawData) {
+  for(const auto& pair : bucket.m_drawData) {
     std::shared_ptr<Draw> call = pair.second;
 
     glBindVertexArray(call->vaoID);
@@ -131,7 +131,7 @@ void GLBackend::Load(
   glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
   glBufferData(GL_ARRAY_BUFFER, posSize, &pos[0], GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
   glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
   glBufferData(GL_ARRAY_BUFFER, uvSize, &uvs[0], GL_STATIC_DRAW);
@@ -140,87 +140,11 @@ void GLBackend::Load(
 }
 
 bool GLBackend::Load(ShaderHandleType& shader, ShaderType type, const std::string& path) {
-  if(type == ShaderType::Vertex) {
-    shader = glCreateShader(GL_VERTEX_SHADER);
-  } else if(type == ShaderType::Fragment) {
-    shader = glCreateShader(GL_FRAGMENT_SHADER);
-  }
-
-  std::cout << "Loading shader " << shader << " from file " << path << std::endl;
-
-	std::string text;
-  std::string line;
-	std::ifstream stream(path, std::ios::in);
-  GLint compilationResult = 0;
-  bool ok = false;
-	int length = 0;
-
-	if(stream.is_open()) {
-		while(getline(stream, line)) {
-			text += "\n" + line;
-		}
-
-		stream.close();
-    ok = true;
-	} else {
-		std::cerr << "GLBackend failed to load text file " << path << std::endl;
-	}
-
-  if(ok) {
-    const char* textPointer = text.c_str();
-    glShaderSource(shader, 1, &textPointer, NULL);
-    glCompileShader(shader);
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compilationResult);
-
-    if(!compilationResult) {
-      glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-      std::vector<char> log(length + 1);
-      glGetShaderInfoLog(shader, length, NULL, log.data());
-
-      std::cerr << "GLShaderProgram failed to compile shader "
-                << shader
-                << " log:"
-                << std::endl
-                << log.data()
-                << std::endl;
-
-      ok = false;
-    }
-  }
-
-	return ok;
+  return m_shaderLoader.LoadShader(shader, type, path);
 }
 
-bool GLBackend::Load(ShaderProgramHandleType& program, const Shader<GLBackend>& vs, const Shader<GLBackend>& fs) {
-	GLint result = GL_FALSE;
-	int length = 0;
-  const ShaderHandleType vsId = vs.GetHandle();
-  const ShaderHandleType fsId = fs.GetHandle();
-
-  program = glCreateProgram();
-	glAttachShader(program, vsId);
-	glAttachShader(program, fsId);
-	glLinkProgram(program);
-
-	glGetProgramiv(program, GL_LINK_STATUS, &result);
-
-	if(result) {
-		glDetachShader(program, vsId);
-		glDetachShader(program, fsId);
-	} else {
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
-		std::vector<char> log(length + 1);
-		glGetProgramInfoLog(program, length, NULL, log.data());
-
-		std::cerr << "GLShaderProgram failed to link "
-              << program
-              << " log:"
-							<< std::endl
-              << log.data()
-              << std::endl;
-	}
-
-	return result;
+bool GLBackend::Load(ShaderProgram<GLBackend>* shaderProgram, const Shader<GLBackend>& vs, const Shader<GLBackend>& fs) {
+  return m_shaderLoader.LoadShaderProgram(shaderProgram, vs, fs);
 }
 
 void GLBackend::DestroyTexture(TextureHandleType& texture) {

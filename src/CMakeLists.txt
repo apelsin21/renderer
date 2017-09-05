@@ -11,6 +11,7 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader_program.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/glshaderloader.cpp
 
   PARENT_SCOPE
 )
@@ -29,6 +30,9 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/texture.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader_program.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ishaderloader.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/glshaderloader.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/defines.hpp
 
   PARENT_SCOPE
 )

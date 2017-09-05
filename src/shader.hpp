@@ -2,14 +2,9 @@
 #define SHADER_HPP
 
 #include <string>
+#include <vector>
 
-enum class ShaderType {
-  Vertex,
-  Fragment,
-  Geometry,
-  Tesselation,
-  Max
-};
+#include "defines.hpp"
 
 template <class GraphicsBackend>
 class Shader {

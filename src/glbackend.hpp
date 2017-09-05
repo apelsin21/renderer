@@ -6,9 +6,11 @@
 #include "texture.hpp"
 #include "shader.hpp"
 #include "shader_program.hpp"
+#include "glshaderloader.hpp"
 
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 #include <epoxy/gl.h>
 #include <FreeImage.h>
@@ -16,6 +18,7 @@
 class GLBackend {
 protected:
   SDL2Window m_window;
+  GLShaderLoader m_shaderLoader;
 
 public:
   typedef GLuint TextureHandleType;
@@ -37,7 +40,7 @@ public:
   
   bool Load(TextureHandleType& texture, const Image& image);
   bool Load(ShaderHandleType& shader, ShaderType type, const std::string& path);
-  bool Load(ShaderProgramHandleType& program, const Shader<GLBackend>& vs, const Shader<GLBackend>& fs);
+  bool Load(ShaderProgram<GLBackend>* program, const Shader<GLBackend>& vs, const Shader<GLBackend>& fs);
 
   void Load(
       VertexBufferHandleType& buffer,
