@@ -60,6 +60,19 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
         REQUIRE(shaderProgram.Load(vertexShader, fragmentShader));
         REQUIRE(texture.Load({"testbild.jpg"}));
 
+        vector<ShaderAttribute> attributes = shaderProgram.GetAttributes();
+        vector<ShaderAttribute> uniforms = shaderProgram.GetUniforms();
+
+        cout << "Found " << attributes.size() << " attributes, "
+             << "and " << uniforms.size() << " uniforms.\n";
+
+        for(const auto& attribute : attributes) {
+          cout << "Attribute " << attribute.GetName() << " @ " << attribute.GetLocation() << std::endl;
+        }
+        for(const auto& uniform : uniforms) {
+          cout << "Uniform " << uniform.GetName() << " @ " << uniform.GetLocation() << std::endl;
+        }
+
         leftCall->vaoID = leftMesh.GetLayoutHandle();
         leftCall->shaderProgram = shaderProgram.GetHandle();
         leftCall->textureID = texture.GetHandle();

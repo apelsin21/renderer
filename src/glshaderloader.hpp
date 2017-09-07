@@ -25,6 +25,7 @@ class GLShaderLoader {
 
   protected:
     std::vector<ShaderAttribute> GetActiveAttributes(const GLuint programId) const;
+    std::vector<ShaderAttribute> GetActiveUniforms(const GLuint programId) const;
     ShaderAttributeType ConvertGLAttributeType(const GLenum type) const;
 };
 

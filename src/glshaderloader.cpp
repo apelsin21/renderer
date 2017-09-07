@@ -90,6 +90,7 @@ bool GLShaderLoader::LoadShaderProgram(ShaderProgram<GLBackend>* shaderProgram,
 
 	if(result) {
     shaderProgram->AddAttributes(GetActiveAttributes(programId));
+    shaderProgram->AddUniforms(GetActiveUniforms(programId));
 
 		glDetachShader(programId, vsId);
 		glDetachShader(programId, fsId);
@@ -116,39 +117,47 @@ bool GLShaderLoader::LoadShaderProgram(ShaderProgram<GLBackend>* shaderProgram,
 std::vector<ShaderAttribute>
 GLShaderLoader::GetActiveAttributes(const GLuint programId) const {
   GLint attributeCount = 0;
-  GLint uniformCount = 0;
   glGetProgramiv(programId, GL_ACTIVE_ATTRIBUTES, &attributeCount);
+
+  char buffer[128];
+  GLenum type = 0;
+  GLsizei size = 0;
+
+  vector<ShaderAttribute> attributes;
+
+  for(int i = 0; i < attributeCount; i++) {
+    glGetActiveAttrib(programId, i, sizeof(buffer), 0, &size, &type, buffer);
+    const GLuint location = glGetAttribLocation(programId, buffer);
+
+    attributes.emplace_back(ShaderAttribute(buffer, ConvertGLAttributeType(type), size, location));
+
+    std::cout << "found attribute " << buffer << " @ " << location << std::endl;
+  }
+
+  return attributes;
+}
+
+std::vector<ShaderAttribute>
+GLShaderLoader::GetActiveUniforms(const GLuint programId) const {
+  GLint uniformCount = 0;
   glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
   char buffer[128];
   GLenum type = 0;
   GLsizei size = 0;
 
-  vector<ShaderAttribute> attributes(attributeCount + uniformCount);
-
-  for(int i = 0; i < attributeCount; i++) {
-    glGetActiveAttrib(programId, i, sizeof(buffer), 0, &size, &type, buffer);
-    const GLuint location = glGetAttribLocation(programId, buffer);
-
-    const ShaderAttributeType attribType = ConvertGLAttributeType(type);
-    const ShaderAttribute attribute(buffer, attribType, size);
-    attributes.emplace_back(attribute);
-
-    std::cout << "found attribute " << buffer << " @ " << location << std::endl;
-  }
+  vector<ShaderAttribute> uniforms;
 
   for(int i = 0; i < uniformCount; i++) {
     glGetActiveUniform(programId, i, sizeof(buffer), 0, &size, &type, buffer);
     const GLuint location = glGetUniformLocation(programId, buffer);
 
-    const ShaderAttributeType uniformType = ConvertGLAttributeType(type);
-    const ShaderAttribute uniform(buffer, uniformType, size);
-    attributes.emplace_back(uniform);
+    uniforms.emplace_back(ShaderAttribute(buffer, ConvertGLAttributeType(type), size, location));
 
     std::cout << "found uniform " << buffer << " @ " << location << std::endl;
   }
 
-  return attributes;
+  return uniforms;
 }
 
 ShaderAttributeType GLShaderLoader::ConvertGLAttributeType(const GLenum type) const {

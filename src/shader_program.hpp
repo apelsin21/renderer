@@ -14,6 +14,7 @@ protected:
   GraphicsBackend& m_backend;
   ShaderProgramHandle m_handle;
   std::vector<ShaderAttribute> m_attributes;
+  std::vector<ShaderAttribute> m_uniforms;
 
 public:
   ShaderProgram(GraphicsBackend& backend) : m_backend(backend) {
@@ -26,11 +27,19 @@ public:
     return m_backend.Load(this, vertexShader, fragmentShader);
   }
   
-  void AddAttribute(const ShaderAttribute& attribute) {
-    m_attributes.emplace_back(attribute);
-  }
   void AddAttributes(const std::vector<ShaderAttribute>& attributes) {
     m_attributes.insert(m_attributes.end(), attributes.begin(), attributes.end());
+  }
+
+  void AddUniforms(const std::vector<ShaderAttribute>& uniforms) {
+    m_uniforms.insert(m_uniforms.end(), uniforms.begin(), uniforms.end());
+  }
+  std::vector<ShaderAttribute> GetAttributes() const {
+    return m_attributes;
+  }
+
+  std::vector<ShaderAttribute> GetUniforms() const {
+    return m_uniforms;
   }
 
   ShaderProgramHandle GetHandle() const {

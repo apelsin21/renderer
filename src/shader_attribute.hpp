@@ -24,19 +24,22 @@ class ShaderAttribute {
     std::string m_name;
     ShaderAttributeType m_type;
     unsigned int m_size;
+    unsigned int m_location;
   public:
-    ShaderAttribute() : m_type(ShaderAttributeType::None), m_size(0) {}
+    ShaderAttribute() : m_type(ShaderAttributeType::None), m_size(0), m_location(0) {}
 
     ShaderAttribute(const std::string& name,
                     const ShaderAttributeType& type,
-                    const unsigned size)
-      : m_name(name), m_type(type), m_size(size) {
+                    const unsigned size,
+                    const unsigned location)
+      : m_name(name), m_type(type), m_size(size), m_location(location) {
     }
     ~ShaderAttribute() {
     }
 
     std::string GetName() const { return m_name; }
     ShaderAttributeType GetType() const { return m_type; }
+    unsigned int GetLocation() const { return m_location; }
 };
 
 #endif
