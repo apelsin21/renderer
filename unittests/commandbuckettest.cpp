@@ -53,12 +53,9 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
            1.0f,  0.0f, //BR
         };
 
-        leftMesh.Load(leftPositions, uvs);
-        rightMesh.Load(rightPositions, uvs);
         REQUIRE(vertexShader.Load("vs.glsl"));
         REQUIRE(fragmentShader.Load("fs.glsl"));
         REQUIRE(shaderProgram.Load(vertexShader, fragmentShader));
-        REQUIRE(texture.Load({"testbild.jpg"}));
 
         vector<ShaderAttribute> attributes = shaderProgram.GetAttributes();
         vector<ShaderAttribute> uniforms = shaderProgram.GetUniforms();
@@ -72,6 +69,20 @@ SCENARIO("CommandBucket can allocate and return drawcalls", "[CommandBucket]") {
         for(const auto& uniform : uniforms) {
           cout << "Uniform " << uniform.GetName() << " @ " << uniform.GetLocation() << std::endl;
         }
+
+        const ShaderAttribute positionAttrib = shaderProgram.GetAttributeByName("in_pos");
+        const ShaderAttribute uvAttrib = shaderProgram.GetAttributeByName("in_uv");
+
+        cout << "Got attribute " << positionAttrib.GetName() << std::endl;
+        cout << "Got attribute " << uvAttrib.GetName() << std::endl;
+
+        leftMesh.Add(leftPositions, positionAttrib);
+        leftMesh.Add(uvs, uvAttrib);
+
+        rightMesh.Add(rightPositions, positionAttrib);
+        rightMesh.Add(uvs, uvAttrib);
+
+        REQUIRE(texture.Load({"testbild.jpg"}));
 
         leftCall->vaoID = leftMesh.GetLayoutHandle();
         leftCall->shaderProgram = shaderProgram.GetHandle();

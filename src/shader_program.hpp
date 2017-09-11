@@ -34,6 +34,17 @@ public:
   void AddUniforms(const std::vector<ShaderAttribute>& uniforms) {
     m_uniforms.insert(m_uniforms.end(), uniforms.begin(), uniforms.end());
   }
+
+  ShaderAttribute GetAttributeByName(const std::string& name) const {
+    for(const auto& attribute : m_attributes) {
+      if(attribute.GetName() == name) {
+        return attribute;
+      }
+    }
+
+    return ShaderAttribute();
+  }
+
   std::vector<ShaderAttribute> GetAttributes() const {
     return m_attributes;
   }

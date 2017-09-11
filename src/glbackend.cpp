@@ -1,3 +1,5 @@
+#include "shader_attribute.hpp"
+
 #include "glbackend.hpp"
 
 void GLBackend::Submit(const CommandBucket<unsigned>& bucket) {
@@ -137,6 +139,33 @@ void GLBackend::Load(
   glBufferData(GL_ARRAY_BUFFER, uvSize, &uvs[0], GL_STATIC_DRAW);
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+}
+
+bool GLBackend::AddVertexBufferToMesh(Mesh<GLBackend>* mesh,
+                                      const std::vector<float>& vertices,
+                                      GLuint& bufferHandle,
+                                      const ShaderAttribute& shaderAttribute) const {
+  GLuint& vaoId = mesh->GetLayoutHandleMutable();
+
+  if(!glIsVertexArray(vaoId)) {
+    glGenVertexArrays(1, &vaoId);
+    std::cout << "creating vao " << vaoId << std::endl;
+  }
+
+  if(!glIsBuffer(bufferHandle)) {
+    glGenBuffers(1, &bufferHandle);
+    std::cout << "creating buffer " << bufferHandle << std::endl;
+  }
+
+  const GLuint location = shaderAttribute.GetLocation();
+
+  glBindVertexArray(vaoId);
+  glBindBuffer(GL_ARRAY_BUFFER, bufferHandle);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(location);
+  glVertexAttribPointer(location, static_cast<unsigned int>(shaderAttribute.GetType()), GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  return true;
 }
 
 bool GLBackend::Load(ShaderHandleType& shader, ShaderType type, const std::string& path) {

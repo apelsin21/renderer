@@ -7,6 +7,7 @@
 #include "shader.hpp"
 #include "shader_program.hpp"
 #include "glshaderloader.hpp"
+#include "mesh.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -53,6 +54,11 @@ public:
       VertexLayoutHandleType& layout,
       const std::vector<float>& vertices,
       const std::vector<float>& uvs);
+
+  bool AddVertexBufferToMesh(Mesh<GLBackend>* mesh,
+                             const std::vector<float>& vertices,
+                             GLuint& bufferHandle,
+                             const ShaderAttribute& shaderAttribute) const;
   
   void DestroyTexture(TextureHandleType& texture);
   void DestroyVertexBuffer(VertexBufferHandleType& buffer);

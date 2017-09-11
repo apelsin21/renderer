@@ -3,19 +3,16 @@
 
 #include <string>
 
-enum class ShaderAttributeType {
-  None,
-  Float,
-  Vec2,
-  Vec3,
-  Vec4,
-  Mat2,
-  Mat3,
-  Mat4,
-  Mat2x4,
-  Mat3x4,
-  Mat4x2,
-  Mat4x3,
+enum class ShaderAttributeType : unsigned int {
+  None = 0,
+  Float = 1,
+  Vec2 = 2,
+  Vec3 = 3,
+  Vec4 = 4,
+  Mat3 = 9,
+  Mat4 = 16,
+  Mat2x4 = 8,
+  Mat3x4 = 12,
   Max
 };
 

@@ -6,6 +6,7 @@
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "shader_program.hpp"
+#include "shader_attribute.hpp"
 
 template <typename GraphicsBackend>
 class GraphicsDevice {

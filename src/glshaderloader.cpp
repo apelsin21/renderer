@@ -166,13 +166,10 @@ ShaderAttributeType GLShaderLoader::ConvertGLAttributeType(const GLenum type) co
     case GL_FLOAT_VEC2:   return ShaderAttributeType::Vec2;
     case GL_FLOAT_VEC3:   return ShaderAttributeType::Vec3;
     case GL_FLOAT_VEC4:   return ShaderAttributeType::Vec4;
-    case GL_FLOAT_MAT2:   return ShaderAttributeType::Mat2;
     case GL_FLOAT_MAT3:   return ShaderAttributeType::Mat3;
     case GL_FLOAT_MAT4:   return ShaderAttributeType::Mat4;
     case GL_FLOAT_MAT2x4: return ShaderAttributeType::Mat2x4;
     case GL_FLOAT_MAT3x4: return ShaderAttributeType::Mat3x4;
-    case GL_FLOAT_MAT4x2: return ShaderAttributeType::Mat4x2;
-    case GL_FLOAT_MAT4x3: return ShaderAttributeType::Mat4x3;
     default:              return ShaderAttributeType::None;
   }
 }
